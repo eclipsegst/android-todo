@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">ToDo App</string>
+
+    <string name="enter_a_new_item">Enter a new item</string>
+    <string name="add_item">Add item</string>
+
+    <string name="update_to_do">Update Todo</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_ok">Ok</string>
+</resources>
