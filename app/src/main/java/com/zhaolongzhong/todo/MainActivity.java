@@ -2,47 +2,48 @@ package com.zhaolongzhong.todo;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import org.apache.commons.io.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private static final String TODO_FILENAME = "todo.txt";
-
-    private ListView listView;
     private EditText editText;
-    private Button addButton;
 
-    private List<String> todoList;
-    private TodoAdapter todoAdapter;
+    private TaskDatabaseHelper taskDatabaseHelper;
+    private List<Task> taskList;
+    private TaskAdapter taskAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
-        readItems();
+        taskDatabaseHelper = TaskDatabaseHelper.getInstance(this);
 
-        listView = (ListView) findViewById(R.id.main_activity_todo_list_view_id);
+        taskList = taskDatabaseHelper.getAllTasks();
+
+        ListView listView = (ListView) findViewById(R.id.main_activity_task_list_view_id);
         editText = (EditText) findViewById(R.id.main_activity_edit_text_id);
-        addButton = (Button) findViewById(R.id.main_activity_add_button_id);
+        Button addButton = (Button) findViewById(R.id.main_activity_add_button_id);
         addButton.setOnClickListener(addOnClickListener);
 
-        todoAdapter = new TodoAdapter(this, todoList);
-        listView.setAdapter(todoAdapter);
+        taskAdapter = new TaskAdapter(this, taskList);
+        listView.setAdapter(taskAdapter);
         listView.setOnItemClickListener(onItemClickListener);
         listView.setOnItemLongClickListener(onItemLongClickListener);
+    }
+
+    private void invalidViews() {
+        //TODO: Is this the most efficient way?
+        taskList = taskDatabaseHelper.getAllTasks();
+        taskAdapter.clear();
+        taskAdapter.addAll(taskList);
+        editText.setText("");
     }
 
     private View.OnClickListener addOnClickListener = new View.OnClickListener() {
@@ -53,67 +54,40 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            todoAdapter.add(itemText);
-            editText.setText("");
-            writeItems();
+            Task task = new Task();
+            task.setTitle(itemText);
+
+            taskDatabaseHelper.addTask(task);
+            invalidViews();
         }
     };
 
     private ListView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            TodoDialogFragment todoDialogFragment = TodoDialogFragment.newInstance(position, todoList.get(position));
-            todoDialogFragment.setTodoDialogFragmentCallback(todoDialogFragmentCallback);
-            todoDialogFragment.show(getFragmentManager(), TodoDialogFragment.class.getSimpleName());
+            UpdateDialogFragment updateDialogFragment = UpdateDialogFragment.newInstance(taskList.get(position).getId());
+            updateDialogFragment.setTodoDialogFragmentCallback(todoDialogFragmentCallback);
+            updateDialogFragment.show(getFragmentManager(), UpdateDialogFragment.class.getSimpleName());
         }
     };
 
     private ListView.OnItemLongClickListener onItemLongClickListener = new AdapterView.OnItemLongClickListener() {
         @Override
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-            todoList.remove(position);
-            todoAdapter.notifyDataSetChanged();
-            writeItems();
+            taskDatabaseHelper.deleteTaskById(taskList.get(position).getId());
+            invalidViews();
+
             return true;
         }
     };
 
-
     /**
-     * TodoDialogFragmentCallback, update item in list when dialog dismiss
+     * TodoDialogFragmentCallback, update task list only when task content changed
      */
-    private TodoDialogFragment.TodoDialogFragmentCallback todoDialogFragmentCallback = new TodoDialogFragment.TodoDialogFragmentCallback() {
+    private UpdateDialogFragment.TodoDialogFragmentCallback todoDialogFragmentCallback = new UpdateDialogFragment.TodoDialogFragmentCallback() {
         @Override
-        public void onDialogDismiss(int position, String title) {
-            todoList.set(position, title);
-            todoAdapter.notifyDataSetChanged();
-            writeItems();
+        public void onUpdateFinished() {
+            invalidViews();
         }
     };
-
-    /**
-     * Read data from file
-     */
-    private void readItems() {
-        File filesDir = getFilesDir();
-        File todoFile = new File(filesDir, TODO_FILENAME);
-        try {
-            todoList = new ArrayList<>(FileUtils.readLines(todoFile));
-        } catch (IOException e) {
-            todoList = new ArrayList<>();
-        }
-    }
-
-    /**
-     * Write to-do list to file
-     */
-    private void writeItems() {
-        File filesDir = getFilesDir();
-        File todoFile = new File(filesDir, TODO_FILENAME);
-        try {
-            FileUtils.writeLines(todoFile, todoList);
-        } catch (IOException e) {
-            Log.e(TAG, "Error in writeItems.", e);
-        }
-    }
 }

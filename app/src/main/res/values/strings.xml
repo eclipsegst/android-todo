@@ -6,5 +6,5 @@
 
     <string name="update_to_do">Update Todo</string>
     <string name="dialog_cancel">Cancel</string>
-    <string name="dialog_ok">Ok</string>
+    <string name="dialog_save">Save</string>
 </resources>

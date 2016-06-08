@@ -15,30 +15,25 @@ import android.widget.EditText;
  * Created by zz on 6/6/16.
  */
 
-public class TodoDialogFragment extends DialogFragment {
-    private static final String TAG = TodoDialogFragment.class.getSimpleName();
+public class UpdateDialogFragment extends DialogFragment {
+    private static final String TAG = UpdateDialogFragment.class.getSimpleName();
 
-    private static String POSITION = "position";
-    private static String TITLE = "title";
-
-    private int position;
-    private String title;
+    private static String TASK_ID = "taskId";
 
     private EditText titleEditText;
-    private Button cancelButton;
-    private Button okButton;
 
     private TodoDialogFragmentCallback todoDialogFragmentCallback;
+    private TaskDatabaseHelper taskDatabaseHelper;
+    private Task task;
 
-    public static TodoDialogFragment newInstance(int position, String title) {
-        TodoDialogFragment todoDialogFragment = new TodoDialogFragment();
+    public static UpdateDialogFragment newInstance(int taskId) {
+        UpdateDialogFragment updateDialogFragment = new UpdateDialogFragment();
 
         Bundle bundle = new Bundle();
-        bundle.putInt(POSITION, position);
-        bundle.putString(TITLE, title);
-        todoDialogFragment.setArguments(bundle);
+        bundle.putInt(TASK_ID, taskId);
+        updateDialogFragment.setArguments(bundle);
 
-        return todoDialogFragment;
+        return updateDialogFragment;
     }
 
     @Override
@@ -61,17 +56,18 @@ public class TodoDialogFragment extends DialogFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        taskDatabaseHelper = TaskDatabaseHelper.getInstance(getActivity());
+
         titleEditText = (EditText) view.findViewById(R.id.todo_dialog_title_edit_text_id);
-        cancelButton = (Button) view.findViewById(R.id.todo_dialog_cancel_button_id);
-        okButton = (Button) view.findViewById(R.id.todo_dialog_ok_button_id);
+        Button cancelButton = (Button) view.findViewById(R.id.todo_dialog_cancel_button_id);
+        Button okButton = (Button) view.findViewById(R.id.todo_dialog_ok_button_id);
 
         cancelButton.setOnClickListener(cancelOnClickListener);
         okButton.setOnClickListener(okOnClickListener);
 
-        Bundle bundle = getArguments();
-        position = bundle.getInt(POSITION);
-        title = bundle.getString(TITLE);
-        titleEditText.setText(title);
+        int taskId = getArguments().getInt(TASK_ID);
+        task = taskDatabaseHelper.getTaskById(taskId);
+        titleEditText.setText(task.getTitle());
 
         titleEditText.requestFocus();
         getDialog().getWindow().setSoftInputMode(
@@ -89,9 +85,9 @@ public class TodoDialogFragment extends DialogFragment {
         @Override
         public void onClick(View v) {
             getDialog().dismiss();
-            if (todoDialogFragmentCallback != null) {
-                todoDialogFragmentCallback.onDialogDismiss(position, titleEditText.getText().toString());
-            }
+            task.setTitle(titleEditText.getText().toString());
+            taskDatabaseHelper.updateTask(task);
+            todoDialogFragmentCallback.onUpdateFinished();
         }
     };
 
@@ -100,6 +96,6 @@ public class TodoDialogFragment extends DialogFragment {
     }
 
     public interface TodoDialogFragmentCallback {
-        void onDialogDismiss(int position, String title);
+        void onUpdateFinished();
     }
 }
