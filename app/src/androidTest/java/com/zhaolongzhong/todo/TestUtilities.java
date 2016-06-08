@@ -2,6 +2,8 @@ package com.zhaolongzhong.todo;
 
 import android.test.AndroidTestCase;
 
+import com.zhaolongzhong.todo.model.Task;
+
 /**
  * Created by zz on 6/6/16.
  */

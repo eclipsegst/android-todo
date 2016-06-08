@@ -11,6 +11,9 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.zhaolongzhong.todo.data.TaskDatabaseHelper;
+import com.zhaolongzhong.todo.model.Task;
+
 /**
  * Created by zz on 6/6/16.
  */
@@ -26,11 +29,11 @@ public class UpdateDialogFragment extends DialogFragment {
     private TaskDatabaseHelper taskDatabaseHelper;
     private Task task;
 
-    public static UpdateDialogFragment newInstance(int taskId) {
+    public static UpdateDialogFragment newInstance(long taskId) {
         UpdateDialogFragment updateDialogFragment = new UpdateDialogFragment();
 
         Bundle bundle = new Bundle();
-        bundle.putInt(TASK_ID, taskId);
+        bundle.putLong(TASK_ID, taskId);
         updateDialogFragment.setArguments(bundle);
 
         return updateDialogFragment;
@@ -65,7 +68,7 @@ public class UpdateDialogFragment extends DialogFragment {
         cancelButton.setOnClickListener(cancelOnClickListener);
         okButton.setOnClickListener(okOnClickListener);
 
-        int taskId = getArguments().getInt(TASK_ID);
+        long taskId = getArguments().getLong(TASK_ID);
         task = taskDatabaseHelper.getTaskById(taskId);
         titleEditText.setText(task.getTitle());
 

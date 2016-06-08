@@ -1,4 +1,4 @@
-package com.zhaolongzhong.todo;
+package com.zhaolongzhong.todo.model;
 
 /**
  * Created by zz on 6/6/16.

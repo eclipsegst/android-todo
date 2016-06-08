@@ -1,10 +1,19 @@
 <resources>
-    <string name="app_name">ToDo App</string>
-
+    <string name="app_name">To Do</string>
+    <string name="task_detail_activity">Detail</string>
+    <string name="no_task">No task</string>
     <string name="enter_a_new_item">Enter a new item</string>
     <string name="add_item">Add item</string>
+    <string name="enter_a_title">Enter a title</string>
+    <string name="enter_a_note">(Optional) Enter a note</string>
+    <string name="save">Save</string>
+    <string name="create_task">Create task</string>
+    <string name="unsaved_changes">Unsaved Changes</string>
+    <string name="unsaved_changes_message">Are you sure you want to discard your unsaved changes?</string>
+    <string name="cancel">Cancel</string>
+    <string name="discard">Discard</string>
 
-    <string name="update_to_do">Update Todo</string>
+    <string name="update_to_do">Update task</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_save">Save</string>
 </resources>

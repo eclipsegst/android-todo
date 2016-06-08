@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.zhaolongzhong.todo.model.Task;
+
 import java.util.List;
 
 /**

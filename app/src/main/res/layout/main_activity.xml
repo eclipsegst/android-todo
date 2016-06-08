@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.design.widget.CoordinatorLayout
+    android:id="@+id/main_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.zhaolongzhong.todo.MainActivity">
+    android:layout_height="match_parent">
 
     <!-- To do item list -->
     <ListView
@@ -15,30 +15,21 @@
         android:layout_alignParentStart="true"
         android:layout_above="@+id/main_activity_edit_text_id"/>
 
-    <!-- EditText field -->
-    <EditText
-        android:id="@+id/main_activity_edit_text_id"
+    <TextView
+        android:id="@+id/main_activity_no_task_text_view_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_toLeftOf="@+id/main_activity_add_button_id"
-        android:layout_toStartOf="@+id/main_activity_add_button_id"
-        android:layout_marginLeft="@dimen/spacing_medium"
-        android:layout_marginRight="@dimen/spacing_medium"
-        android:hint="@string/enter_a_new_item"/>
+        android:layout_gravity="center"
+        android:text="@string/no_task"
+        android:textSize="@dimen/text_medium_small"/>
 
-    <!-- Add item button -->
-    <Button
-        android:id="@+id/main_activity_add_button_id"
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginLeft="@dimen/spacing_medium"
-        android:layout_marginRight="@dimen/spacing_medium"
-        android:text="@string/add_item" />
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@android:drawable/ic_input_add"
+        android:tint="@android:color/white"/>
 
-</RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>
