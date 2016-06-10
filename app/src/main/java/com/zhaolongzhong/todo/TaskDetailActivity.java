@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -23,6 +24,9 @@ public class TaskDetailActivity extends AppCompatActivity {
 
     private TextView titleTextView;
     private TextView noteTextView;
+    private TextView dueDateTextView;
+    private TextView priorityTextView;
+    private TextView statusTextView;
 
     public static void newInstance(Context context, long taskId) {
         Intent intent = new Intent(context, TaskDetailActivity.class);
@@ -39,6 +43,10 @@ public class TaskDetailActivity extends AppCompatActivity {
 
         titleTextView = (TextView) findViewById(R.id.task_detail_activity_title_text_view_id);
         noteTextView = (TextView) findViewById(R.id.task_detail_activity_note_text_view_id);
+        dueDateTextView = (TextView) findViewById(R.id.task_detail_activity_due_date_text_view_id);
+        priorityTextView = (TextView) findViewById(R.id.task_detail_activity_priority_text_view_id);
+        statusTextView = (TextView) findViewById(R.id.task_detail_activity_status_text_view_id);
+
         titleTextView.setOnClickListener(titleOnClickListener);
         taskDatabaseHelper = TaskDatabaseHelper.getInstance(this);
         taskId = getIntent().getLongExtra(TASK_ID, -1);
@@ -49,6 +57,10 @@ public class TaskDetailActivity extends AppCompatActivity {
         task = taskDatabaseHelper.getTaskById(taskId);
         titleTextView.setText(task.getTitle());
         noteTextView.setText(task.getNote());
+        dueDateTextView.setText(task.getDueDate());
+        priorityTextView.setText(task.getPriority());
+        statusTextView.setText(task.isStatus()? "Done" : "Undone");
+
     }
 
     private View.OnClickListener titleOnClickListener = new View.OnClickListener() {

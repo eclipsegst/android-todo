@@ -20,30 +20,117 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/toolbar">
+        android:layout_below="@+id/toolbar"
+        android:padding="@dimen/spacing_large">
 
         <!-- Title -->
-        <EditText
-            android:id="@+id/add_task_activity_title_edit_text_id"
-            android:layout_width="240dp"
+        <TextView
+            android:id="@+id/add_task_activity_title_text_view_id"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_margin="@dimen/spacing_large"
+            android:layout_margin="@dimen/spacing_small"
+
+            android:text="Title"
+            android:textSize="@dimen/text_medium"/>
+
+        <EditText
+            android:id="@+id/add_task_activity_title_edit_text_id"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/add_task_activity_title_text_view_id"
+            android:layout_margin="@dimen/spacing_small"
+
+            android:padding="4dp"
             android:maxLines="1"
-            android:hint="@string/enter_a_title"/>
+            android:background="@drawable/round_corner_border"
+            android:textSize="@dimen/text_medium_small"/>
 
         <!-- Note -->
+        <TextView
+            android:id="@+id/add_task_activity_note_text_view_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/add_task_activity_title_edit_text_id"
+            android:layout_margin="@dimen/spacing_small"
+
+            android:text="@string/add_note"
+            android:textSize="@dimen/text_medium"/>
+
         <EditText
             android:id="@+id/add_task_activity_note_edit_text_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_below="@+id/add_task_activity_title_edit_text_id"
-            android:layout_margin="@dimen/spacing_large"
-            android:hint="@string/enter_a_note"/>
+            android:layout_below="@+id/add_task_activity_note_text_view_id"
+            android:layout_margin="@dimen/spacing_small"
+
+            android:padding="4dp"
+            android:gravity="start|top|left"
+            android:maxLines="4"
+            android:minLines="4"
+            android:background="@drawable/round_corner_border"
+            android:textSize="@dimen/text_medium_small"/>
+
+        <!-- Due date -->
+        <TextView
+            android:id="@+id/add_task_activity_due_date_text_view_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/add_task_activity_note_edit_text_id"
+            android:layout_margin="@dimen/spacing_small"
+
+            android:text="@string/add_due_date"
+            android:textSize="@dimen/text_medium"/>
+
+        <TextView
+            android:id="@+id/add_task_activity_due_date_edit_text_id"
+            android:layout_width="240dp"
+            android:layout_height="40dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/add_task_activity_due_date_text_view_id"
+            android:layout_margin="@dimen/spacing_small"
+
+            android:padding="4dp"
+            android:background="@drawable/round_corner_border"
+            android:textSize="@dimen/text_medium_small"
+            android:textColor="@android:color/black"/>
+
+        <!-- Priority -->
+        <TextView
+            android:id="@+id/add_task_activity_priority_text_view_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/add_task_activity_due_date_edit_text_id"
+            android:layout_margin="@dimen/spacing_small"
+
+            android:text="@string/add_priority"
+            android:textSize="@dimen/text_medium"/>
+
+        <android.support.v7.widget.AppCompatSpinner
+            android:id="@+id/add_task_activity_priority_spinner_id"
+            android:layout_width="240dp"
+            android:layout_height="40dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/add_task_activity_priority_text_view_id"
+            android:layout_margin="@dimen/spacing_small"
+
+            android:padding="4dp"
+            android:background="@drawable/round_corner_border"
+            android:textSize="@dimen/text_medium_small"/>
 
     </RelativeLayout>
 

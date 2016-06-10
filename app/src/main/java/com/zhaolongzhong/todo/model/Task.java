@@ -8,6 +8,9 @@ public class Task {
     private int id;
     private String title;
     private String note;
+    private String dueDate;
+    private String priority;
+    private boolean status;
 
     public int getId() {
         return id;
@@ -31,5 +34,29 @@ public class Task {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public String getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(String dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public String getPriority() {
+        return priority;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 }

@@ -8,14 +8,25 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.zhaolongzhong.todo.data.TaskDatabaseHelper;
 import com.zhaolongzhong.todo.model.Task;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 public class AddTaskActivity extends AppCompatActivity {
     private static final String TAG = AddTaskActivity.class.getSimpleName();
@@ -29,6 +40,10 @@ public class AddTaskActivity extends AppCompatActivity {
 
     private EditText titleEditText;
     private EditText noteEditText;
+    private TextView dueDateTextView;
+    private Spinner prioritySpinner;
+
+    private Task task;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,11 +60,56 @@ public class AddTaskActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(navigationOnClickListener);
 
         taskDatabaseHelper = TaskDatabaseHelper.getInstance(this);
+        task = new Task();
 
         titleEditText = (EditText) findViewById(R.id.add_task_activity_title_edit_text_id);
         noteEditText = (EditText) findViewById(R.id.add_task_activity_note_edit_text_id);
+        dueDateTextView = (TextView) findViewById(R.id.add_task_activity_due_date_edit_text_id);
+        prioritySpinner = (Spinner) findViewById(R.id.add_task_activity_priority_spinner_id);
+
         titleEditText.requestFocus();
+        dueDateTextView.setOnClickListener(dueDateOnClickListener);
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.priority_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        prioritySpinner.setAdapter(adapter);
+        prioritySpinner.setOnItemSelectedListener(onItemSelectedListener);
     }
+
+    private View.OnClickListener dueDateOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            DatePickerFragment datePickerFragment = new DatePickerFragment();
+            datePickerFragment.setDatePickerCallback(datePickerCallback);
+            datePickerFragment.show(getFragmentManager(), DatePickerFragment.class.getSimpleName());
+        }
+    };
+
+    private DatePickerFragment.DatePickerCallback datePickerCallback = new DatePickerFragment.DatePickerCallback() {
+        @Override
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(year, month, day);
+
+            DateFormat format = new SimpleDateFormat(getString(R.string.due_date_format), Locale.ENGLISH);
+            String dueDate = format.format(calendar.getTime());
+            dueDateTextView.setText(dueDate);
+            task.setDueDate(dueDate);
+        }
+    };
+
+    private AdapterView.OnItemSelectedListener onItemSelectedListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    };
 
     /**
      * Show alert to remind user unsaved changed.
@@ -93,10 +153,12 @@ public class AddTaskActivity extends AppCompatActivity {
     }
 
     private void saveTask() {
-        Task task = new Task();
         task.setTitle(titleEditText.getText().toString());
         task.setNote(noteEditText.getText().toString());
+        task.setPriority(prioritySpinner.getSelectedItem().toString());
+        task.setStatus(false);
         taskDatabaseHelper.addTask(task);
+        Log.d(TAG, "saveTask: " + task.getPriority());
         close();
     }
 

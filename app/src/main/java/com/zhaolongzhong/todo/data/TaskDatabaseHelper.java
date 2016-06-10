@@ -21,7 +21,7 @@ public class TaskDatabaseHelper extends SQLiteOpenHelper{
 
     // Database info
     public static final String DATABASE_NAME = "task.db";
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 3;
 
     // Table names
     public static final String TABLE_TASK = "task";
@@ -30,6 +30,9 @@ public class TaskDatabaseHelper extends SQLiteOpenHelper{
     public static final String KEY_TASK_ID = "id";
     public static final String KEY_TASK_TITLE = "title";
     public static final String KEY_TASK_NOTE = "note";
+    public static final String KEY_TASK_DUE_DATE = "dueDate";
+    public static final String KEY_TASK_PRIORITY = "priority";
+    public static final String KEY_TASK_STATUS = "status";
 
     private static TaskDatabaseHelper taskDatabaseHelper;
 
@@ -57,7 +60,10 @@ public class TaskDatabaseHelper extends SQLiteOpenHelper{
                 "(" +
                     KEY_TASK_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
                     KEY_TASK_TITLE + " TEXT," +
-                    KEY_TASK_NOTE + " TEXT" +
+                    KEY_TASK_NOTE + " TEXT," +
+                    KEY_TASK_DUE_DATE + " TEXT," +
+                    KEY_TASK_PRIORITY + " TEXT," +
+                    KEY_TASK_STATUS + " INTEGER" +
 
                 ")";
         db.execSQL(CREATE_TASK_TABLE);
@@ -86,6 +92,9 @@ public class TaskDatabaseHelper extends SQLiteOpenHelper{
             ContentValues values = new ContentValues();
             values.put(KEY_TASK_TITLE, task.getTitle());
             values.put(KEY_TASK_NOTE, task.getNote());
+            values.put(KEY_TASK_DUE_DATE, task.getDueDate());
+            values.put(KEY_TASK_PRIORITY, task.getPriority());
+            values.put(KEY_TASK_STATUS, 0);
 
             rowId = db.insert(TABLE_TASK, null, values);
         } catch (Exception e) {
@@ -112,6 +121,9 @@ public class TaskDatabaseHelper extends SQLiteOpenHelper{
                 newTask.setId(cursor.getInt(cursor.getColumnIndex(KEY_TASK_ID)));
                 newTask.setTitle(cursor.getString(cursor.getColumnIndex(KEY_TASK_TITLE)));
                 newTask.setNote(cursor.getString(cursor.getColumnIndex(KEY_TASK_NOTE)));
+                newTask.setDueDate(cursor.getString(cursor.getColumnIndex(KEY_TASK_DUE_DATE)));
+                newTask.setPriority(cursor.getString(cursor.getColumnIndex(KEY_TASK_PRIORITY)));
+                newTask.setStatus(cursor.getInt(cursor.getColumnIndex(KEY_TASK_STATUS)) != 0);
                 return newTask;
             }
         } catch (Exception e) {
@@ -136,7 +148,6 @@ public class TaskDatabaseHelper extends SQLiteOpenHelper{
 
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(TASKS_SELECT_QUERY, null);
-
         try {
             if (cursor.moveToFirst()) {
                 do {
@@ -144,6 +155,9 @@ public class TaskDatabaseHelper extends SQLiteOpenHelper{
                     newTask.setId(cursor.getInt(cursor.getColumnIndex(KEY_TASK_ID)));
                     newTask.setTitle(cursor.getString(cursor.getColumnIndex(KEY_TASK_TITLE)));
                     newTask.setNote(cursor.getString(cursor.getColumnIndex(KEY_TASK_NOTE)));
+                    newTask.setDueDate(cursor.getString(cursor.getColumnIndex(KEY_TASK_DUE_DATE)));
+                    newTask.setPriority(cursor.getString(cursor.getColumnIndex(KEY_TASK_PRIORITY)));
+                    newTask.setStatus(cursor.getInt(cursor.getColumnIndex(KEY_TASK_STATUS)) != 0);
                     tasks.add(newTask);
                 } while (cursor.moveToNext());
             }
