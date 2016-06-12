@@ -11,7 +11,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/spacing_medium_large"
+        android:padding="@dimen/spacing_medium_small"
         android:gravity="center_vertical">
 
         <!-- Title -->
@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/spacing_small"
-            android:textSize="@dimen/text_medium_large" />
+            android:textSize="@dimen/text_medium" />
 
         <!-- Due date -->
         <TextView
@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/task_cell_title_text_view_id"
             android:layout_margin="@dimen/spacing_small"
-            android:textSize="@dimen/text_medium_small"/>
+            android:textSize="@dimen/text_small"/>
 
         <!-- Priority -->
         <TextView
@@ -37,10 +37,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/task_cell_status_check_box_id"
+            android:layout_toStartOf="@+id/task_cell_status_check_box_id"
+            android:layout_margin="@dimen/spacing_small"
+            android:textSize="@dimen/text_small"/>
+
+        <!-- Status -->
+        <CheckBox
+            android:id="@+id/task_cell_status_check_box_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/task_cell_navigation_image_view_id"
             android:layout_toStartOf="@+id/task_cell_navigation_image_view_id"
             android:layout_margin="@dimen/spacing_small"
-            android:textSize="@dimen/text_medium"/>
+            android:focusable="false"
+            android:focusableInTouchMode="false"/>
 
         <ImageView
             android:id="@+id/task_cell_navigation_image_view_id"

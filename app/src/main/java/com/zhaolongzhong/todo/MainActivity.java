@@ -1,11 +1,17 @@
 package com.zhaolongzhong.todo;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.zhaolongzhong.todo.data.TaskDatabaseHelper;
@@ -16,16 +22,32 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    private static final String STATE_SPINNER = "spinnerState";
     private TaskDatabaseHelper taskDatabaseHelper;
     private List<Task> taskList;
     private TaskAdapter taskAdapter;
 
+    private Spinner spinner;
     private TextView noTaskTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.main_activity_toolbar_id);
+        spinner = (Spinner) findViewById(R.id.main_activity_toolbar_spinner_id);
+        toolbar.setTitleTextColor(Color.WHITE);
+        setSupportActionBar(toolbar);
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.task_status_array, R.layout.spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(onItemSelectedListener);
+
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        spinner.setSelection(sharedPref.getInt(STATE_SPINNER, 0));
 
         noTaskTextView = (TextView) findViewById(R.id.main_activity_no_task_text_view_id);
 
@@ -46,25 +68,27 @@ public class MainActivity extends AppCompatActivity {
 
         taskAdapter = new TaskAdapter(this, taskList);
         listView.setAdapter(taskAdapter);
-        listView.setOnItemClickListener(onItemClickListener);
         listView.setOnItemLongClickListener(onItemLongClickListener);
     }
 
     private void invalidViews() {
         //TODO: Is this the most efficient way?
-        taskList = taskDatabaseHelper.getAllTasks();
+        switch (spinner.getSelectedItemPosition()) {
+            case 0:
+                taskList = taskDatabaseHelper.getAllTasks();
+                break;
+            case 1:
+                taskList = taskDatabaseHelper.getAllTasksByStatus(false);
+                break;
+            case 2:
+                taskList = taskDatabaseHelper.getAllTasksByStatus(true);
+                break;
+        }
+
         taskAdapter.clear();
         taskAdapter.addAll(taskList);
         noTaskTextView.setVisibility(taskList.size() == 0 ? View.VISIBLE : View.GONE);
     }
-
-    private ListView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            TaskDetailActivity.newInstance(MainActivity.this, taskList.get(position).getId());
-            overridePendingTransition(R.anim.right_in, R.anim.left_out);
-        }
-    };
 
     private ListView.OnItemLongClickListener onItemLongClickListener = new AdapterView.OnItemLongClickListener() {
         @Override
@@ -73,6 +97,24 @@ public class MainActivity extends AppCompatActivity {
             invalidViews();
 
             return true;
+        }
+    };
+
+    private AdapterView.OnItemSelectedListener onItemSelectedListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            SharedPreferences sharedPref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putInt(STATE_SPINNER, position);
+            editor.apply();
+
+            invalidViews();
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
         }
     };
 

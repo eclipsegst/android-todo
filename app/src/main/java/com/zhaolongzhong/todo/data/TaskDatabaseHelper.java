@@ -173,6 +173,41 @@ public class TaskDatabaseHelper extends SQLiteOpenHelper{
     }
 
     /**
+     * Return a list of task by status
+     */
+    public List<Task> getAllTasksByStatus(boolean isComplete) {
+        List<Task> tasks = new ArrayList<>();
+
+        String TASKS_SELECT_QUERY =
+                String.format("SELECT * FROM %s WHERE status=%s" , TABLE_TASK, isComplete? 1 : 0);
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(TASKS_SELECT_QUERY, null);
+        try {
+            if (cursor.moveToFirst()) {
+                do {
+                    Task newTask = new Task();
+                    newTask.setId(cursor.getInt(cursor.getColumnIndex(KEY_TASK_ID)));
+                    newTask.setTitle(cursor.getString(cursor.getColumnIndex(KEY_TASK_TITLE)));
+                    newTask.setNote(cursor.getString(cursor.getColumnIndex(KEY_TASK_NOTE)));
+                    newTask.setDueDate(cursor.getString(cursor.getColumnIndex(KEY_TASK_DUE_DATE)));
+                    newTask.setPriority(cursor.getString(cursor.getColumnIndex(KEY_TASK_PRIORITY)));
+                    newTask.setStatus(cursor.getInt(cursor.getColumnIndex(KEY_TASK_STATUS)) != 0);
+                    tasks.add(newTask);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error while trying to get tasks from database.", e);
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+
+        return tasks;
+    }
+
+    /**
      * Update a task
      */
     public int updateTask(Task task) {

@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">To Do</string>
+    <string name="status_all">All</string>
+    <string name="status_todo">Todo</string>
+    <string name="status_done">Done</string>
     <string name="task_detail_activity">Detail</string>
     <string name="no_task">No task</string>
     <string name="enter_a_new_item">Enter a new item</string>
