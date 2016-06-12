@@ -19,7 +19,8 @@
     <string name="cancel">Cancel</string>
     <string name="discard">Discard</string>
 
-    <string name="update_to_do">Update task</string>
+    <string name="detail_title">Title</string>
+    <string name="detail_note">Note</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_save">Save</string>
     <string name="due_date_format">MMMM d, yyyy</string>

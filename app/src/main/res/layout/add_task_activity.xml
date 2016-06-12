@@ -48,7 +48,7 @@
             android:padding="4dp"
             android:maxLines="1"
             android:background="@drawable/round_corner_border"
-            android:textSize="@dimen/text_medium_small"/>
+            android:textSize="@dimen/text_medium_small" />
 
         <!-- Note -->
         <TextView
@@ -67,13 +67,14 @@
             android:id="@+id/add_task_activity_note_edit_text_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="40dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_below="@+id/add_task_activity_note_text_view_id"
             android:layout_margin="@dimen/spacing_small"
 
             android:padding="4dp"
-            android:gravity="start|top|left"
+            android:gravity="center_vertical"
             android:maxLines="4"
             android:minLines="4"
             android:background="@drawable/round_corner_border"

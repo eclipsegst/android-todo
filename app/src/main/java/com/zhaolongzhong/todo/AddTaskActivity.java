@@ -9,10 +9,12 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
@@ -63,7 +65,13 @@ public class AddTaskActivity extends AppCompatActivity {
         task = new Task();
 
         titleEditText = (EditText) findViewById(R.id.add_task_activity_title_edit_text_id);
+        titleEditText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        titleEditText.setSingleLine(true);
         noteEditText = (EditText) findViewById(R.id.add_task_activity_note_edit_text_id);
+        noteEditText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        noteEditText.setSingleLine(true);
+        noteEditText.setHorizontallyScrolling(false);
+        noteEditText.setMaxLines(4);
         dueDateTextView = (TextView) findViewById(R.id.add_task_activity_due_date_edit_text_id);
         prioritySpinner = (Spinner) findViewById(R.id.add_task_activity_priority_spinner_id);
 
@@ -75,6 +83,17 @@ public class AddTaskActivity extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         prioritySpinner.setAdapter(adapter);
         prioritySpinner.setOnItemSelectedListener(onItemSelectedListener);
+
+        titleEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    noteEditText.requestFocus();
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     private View.OnClickListener dueDateOnClickListener = new View.OnClickListener() {

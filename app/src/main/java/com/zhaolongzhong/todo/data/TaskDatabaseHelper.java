@@ -181,6 +181,9 @@ public class TaskDatabaseHelper extends SQLiteOpenHelper{
         ContentValues values = new ContentValues();
         values.put(KEY_TASK_TITLE, task.getTitle());
         values.put(KEY_TASK_NOTE, task.getNote());
+        values.put(KEY_TASK_DUE_DATE, task.getDueDate());
+        values.put(KEY_TASK_PRIORITY, task.getPriority());
+        values.put(KEY_TASK_STATUS, task.isStatus() ? 1 : 0);
 
         return db.update(TABLE_TASK, values, KEY_TASK_ID + " = ?",
                 new String[] { String.valueOf(task.getId()) });

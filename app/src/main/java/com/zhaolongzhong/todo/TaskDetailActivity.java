@@ -5,13 +5,23 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.DatePicker;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.zhaolongzhong.todo.data.TaskDatabaseHelper;
 import com.zhaolongzhong.todo.model.Task;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 public class TaskDetailActivity extends AppCompatActivity {
     private static final String TAG = TaskDetailActivity.class.getSimpleName();
@@ -25,8 +35,8 @@ public class TaskDetailActivity extends AppCompatActivity {
     private TextView titleTextView;
     private TextView noteTextView;
     private TextView dueDateTextView;
-    private TextView priorityTextView;
-    private TextView statusTextView;
+    private Spinner prioritySpinner;
+    private CheckBox statusCheckbox;
 
     public static void newInstance(Context context, long taskId) {
         Intent intent = new Intent(context, TaskDetailActivity.class);
@@ -41,15 +51,25 @@ public class TaskDetailActivity extends AppCompatActivity {
 
         setTitle(getString(R.string.task_detail_activity));
 
+        taskDatabaseHelper = TaskDatabaseHelper.getInstance(this);
+        taskId = getIntent().getLongExtra(TASK_ID, -1);
+
         titleTextView = (TextView) findViewById(R.id.task_detail_activity_title_text_view_id);
         noteTextView = (TextView) findViewById(R.id.task_detail_activity_note_text_view_id);
         dueDateTextView = (TextView) findViewById(R.id.task_detail_activity_due_date_text_view_id);
-        priorityTextView = (TextView) findViewById(R.id.task_detail_activity_priority_text_view_id);
-        statusTextView = (TextView) findViewById(R.id.task_detail_activity_status_text_view_id);
+        statusCheckbox = (CheckBox) findViewById(R.id.task_detail_activity_status_check_box_id);
+        prioritySpinner = (Spinner) findViewById(R.id.task_detail_activity_priority_spinner_id);
 
-        titleTextView.setOnClickListener(titleOnClickListener);
-        taskDatabaseHelper = TaskDatabaseHelper.getInstance(this);
-        taskId = getIntent().getLongExtra(TASK_ID, -1);
+        titleTextView.setOnClickListener(textViewOnClickListener);
+        noteTextView.setOnClickListener(textViewOnClickListener);
+        dueDateTextView.setOnClickListener(dueDateOnClickListener);
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.priority_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        prioritySpinner.setAdapter(adapter);
+        prioritySpinner.setOnItemSelectedListener(onItemSelectedListener);
+
         invalidViews();
     }
 
@@ -58,17 +78,44 @@ public class TaskDetailActivity extends AppCompatActivity {
         titleTextView.setText(task.getTitle());
         noteTextView.setText(task.getNote());
         dueDateTextView.setText(task.getDueDate());
-        priorityTextView.setText(task.getPriority());
-        statusTextView.setText(task.isStatus()? "Done" : "Undone");
-
+        Priority priority = Priority.instanceFromName(task.getPriority());
+        prioritySpinner.setSelection(priority.getId());
+        statusCheckbox.setChecked(task.isStatus());
+        statusCheckbox.setOnCheckedChangeListener(onCheckedChangeListener);
     }
 
-    private View.OnClickListener titleOnClickListener = new View.OnClickListener() {
+    private View.OnClickListener textViewOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            UpdateDialogFragment updateDialogFragment = UpdateDialogFragment.newInstance(taskId);
+            TextView textView = (TextView) v;
+            UpdateDialogFragment updateDialogFragment = UpdateDialogFragment.newInstance(taskId,
+                    textView.equals(titleTextView) ? UpdateDialogFragment.UPDATE_TITLE : UpdateDialogFragment.UPDATE_NOTE);
             updateDialogFragment.setTodoDialogFragmentCallback(todoDialogFragmentCallback);
             updateDialogFragment.show(getFragmentManager(), UpdateDialogFragment.class.getSimpleName());
+        }
+    };
+
+    private View.OnClickListener dueDateOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            DatePickerFragment datePickerFragment = new DatePickerFragment();
+            datePickerFragment.setDatePickerCallback(datePickerCallback);
+            datePickerFragment.show(getFragmentManager(), DatePickerFragment.class.getSimpleName());
+        }
+    };
+
+    private DatePickerFragment.DatePickerCallback datePickerCallback = new DatePickerFragment.DatePickerCallback() {
+        @Override
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(year, month, day);
+
+            DateFormat format = new SimpleDateFormat(getString(R.string.due_date_format), Locale.ENGLISH);
+            String dueDate = format.format(calendar.getTime());
+            dueDateTextView.setText(dueDate);
+            task.setDueDate(dueDate);
+            taskDatabaseHelper.updateTask(task);
+            invalidViews();
         }
     };
 
@@ -79,6 +126,20 @@ public class TaskDetailActivity extends AppCompatActivity {
         @Override
         public void onUpdateFinished() {
             invalidViews();
+        }
+    };
+
+    private AdapterView.OnItemSelectedListener onItemSelectedListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            Priority priority = Priority.instanceFromId(position);
+            task.setPriority(priority.getName());
+            taskDatabaseHelper.updateTask(task);
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
         }
     };
 
@@ -93,6 +154,13 @@ public class TaskDetailActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private CompoundButton.OnCheckedChangeListener onCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            task.setStatus(isChecked);
+            taskDatabaseHelper.updateTask(task);
+        }
+    };
 
     private void close() {
         finish();

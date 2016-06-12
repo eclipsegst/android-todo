@@ -4,7 +4,7 @@
 
 Submitted by: **Zhaolong Zhong**
 
-Time spent: **10** hours spent in total
+Time spent: **12** hours spent in total
 
 ## User Stories
 
@@ -27,6 +27,7 @@ The following **additional** features are implemented:
 
 * [x] Add test for using SQLite
 * [x] Add actvity transition animation
+* [x] Add task status
 
 ## Video Walkthrough 
 

@@ -8,13 +8,12 @@
 
     <!-- Dialog title -->
     <TextView
-        android:text="@string/update_to_do"
+        android:id="@+id/todo_dialog_title_text_view_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/spacing_large"
         android:layout_marginRight="@dimen/spacing_large"
         android:layout_marginTop="@dimen/spacing_medium"
-        android:layout_marginBottom="@dimen/spacing_medium"
         android:textSize="@dimen/text_medium"/>
     
     <!-- To-do title -->
@@ -22,12 +21,15 @@
         android:id="@+id/todo_dialog_title_edit_text_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="100dp"
         android:layout_marginLeft="@dimen/spacing_large"
         android:layout_marginRight="@dimen/spacing_large"
         android:layout_marginTop="@dimen/spacing_medium"
         android:layout_marginBottom="@dimen/spacing_medium"
+        android:padding="@dimen/spacing_medium_small"
         android:textSize="@dimen/text_medium"
-        android:maxLines="2"/>
+        android:maxLines="4"
+        android:background="@drawable/round_corner_border"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -37,14 +39,16 @@
             android:id="@+id/todo_dialog_cancel_button_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/spacing_large"
+            android:layout_marginLeft="@dimen/spacing_large"
+            android:layout_marginRight="@dimen/spacing_large"
             android:text="@string/dialog_cancel"/>
 
         <Button
             android:id="@+id/todo_dialog_ok_button_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/spacing_large"
+            android:layout_marginLeft="@dimen/spacing_large"
+            android:layout_marginRight="@dimen/spacing_large"
             android:text="@string/dialog_save"/>
     </LinearLayout>
 
