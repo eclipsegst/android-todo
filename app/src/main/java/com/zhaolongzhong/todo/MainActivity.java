@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private TaskDatabaseHelper taskDatabaseHelper;
     private List<Task> taskList;
     private TaskAdapter taskAdapter;
+    private int selectedPosition;
 
     private Spinner spinner;
     private TextView noTaskTextView;
