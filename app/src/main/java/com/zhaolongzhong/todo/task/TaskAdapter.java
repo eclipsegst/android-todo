@@ -1,12 +1,12 @@
-package com.zhaolongzhong.todo;
+package com.zhaolongzhong.todo.task;
 
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
-import com.zhaolongzhong.todo.model.Task;
-import com.zhaolongzhong.todo.model.TaskCell;
+import com.zhaolongzhong.todo.service.model.Task;
+import com.zhaolongzhong.todo.service.model.TaskCell;
 
 import java.util.List;
 

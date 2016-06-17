@@ -4,7 +4,7 @@
 
 Submitted by: **Zhaolong Zhong**
 
-Time spent: **13.5** hours spent in total
+Time spent: **15** hours spent in total
 
 ## User Stories
 
@@ -29,6 +29,7 @@ The following **additional** features are implemented:
 * [x] Add actvity transition animation
 * [x] Add task status
 * [x] Add filter by status feature
+* [x] Add splash screen
 
 ## Video Walkthrough 
 

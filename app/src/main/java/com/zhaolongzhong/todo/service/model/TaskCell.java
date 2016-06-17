@@ -1,4 +1,4 @@
-package com.zhaolongzhong.todo.model;
+package com.zhaolongzhong.todo.service.model;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -10,9 +10,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.zhaolongzhong.todo.MainActivity;
+import com.zhaolongzhong.todo.main.MainActivity;
 import com.zhaolongzhong.todo.R;
-import com.zhaolongzhong.todo.TaskDetailActivity;
+import com.zhaolongzhong.todo.task.TaskDetailActivity;
 import com.zhaolongzhong.todo.data.TaskDatabaseHelper;
 
 /**

@@ -1,10 +1,13 @@
-package com.zhaolongzhong.todo;
+package com.zhaolongzhong.todo.main;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -14,8 +17,11 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.zhaolongzhong.todo.R;
 import com.zhaolongzhong.todo.data.TaskDatabaseHelper;
-import com.zhaolongzhong.todo.model.Task;
+import com.zhaolongzhong.todo.service.model.Task;
+import com.zhaolongzhong.todo.task.AddTaskActivity;
+import com.zhaolongzhong.todo.task.TaskAdapter;
 
 import java.util.List;
 
@@ -26,15 +32,22 @@ public class MainActivity extends AppCompatActivity {
     private TaskDatabaseHelper taskDatabaseHelper;
     private List<Task> taskList;
     private TaskAdapter taskAdapter;
-    private int selectedPosition;
 
     private Spinner spinner;
     private TextView noTaskTextView;
+
+    public static void newInstance(Context context) {
+        Intent intent = new Intent(context, MainActivity.class);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
+
+        taskDatabaseHelper = TaskDatabaseHelper.getInstance(this);
+        taskList = taskDatabaseHelper.getAllTasks();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_activity_toolbar_id);
         spinner = (Spinner) findViewById(R.id.main_activity_toolbar_spinner_id);
@@ -44,15 +57,13 @@ public class MainActivity extends AppCompatActivity {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.task_status_array, R.layout.spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.getBackground().setColorFilter(ContextCompat.getColor(this, android.R.color.white), PorterDuff.Mode.SRC_ATOP);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(onItemSelectedListener);
-
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         spinner.setSelection(sharedPref.getInt(STATE_SPINNER, 0));
 
         noTaskTextView = (TextView) findViewById(R.id.main_activity_no_task_text_view_id);
-
-        taskDatabaseHelper = TaskDatabaseHelper.getInstance(this);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -63,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        taskList = taskDatabaseHelper.getAllTasks();
+
         noTaskTextView.setVisibility(taskList.size() == 0 ? View.VISIBLE : View.GONE);
         ListView listView = (ListView) findViewById(R.id.main_activity_task_list_view_id);
 
@@ -72,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemLongClickListener(onItemLongClickListener);
     }
 
-    private void invalidViews() {
+    private void invalidateViews() {
         //TODO: Is this the most efficient way?
         switch (spinner.getSelectedItemPosition()) {
             case 0:
@@ -95,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
             taskDatabaseHelper.deleteTaskById(taskList.get(position).getId());
-            invalidViews();
+            invalidateViews();
 
             return true;
         }
@@ -110,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
             editor.putInt(STATE_SPINNER, position);
             editor.apply();
 
-            invalidViews();
+            invalidateViews();
         }
 
         @Override
@@ -122,6 +133,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        invalidViews();
+        invalidateViews();
     }
 }

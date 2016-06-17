@@ -1,4 +1,4 @@
-package com.zhaolongzhong.todo;
+package com.zhaolongzhong.todo.task;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,8 +15,10 @@ import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.zhaolongzhong.todo.R;
 import com.zhaolongzhong.todo.data.TaskDatabaseHelper;
-import com.zhaolongzhong.todo.model.Task;
+import com.zhaolongzhong.todo.service.model.Task;
+import com.zhaolongzhong.todo.service.Priority;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -70,10 +72,10 @@ public class TaskDetailActivity extends AppCompatActivity {
         prioritySpinner.setAdapter(adapter);
         prioritySpinner.setOnItemSelectedListener(onItemSelectedListener);
 
-        invalidViews();
+        invalidateViews();
     }
 
-    private void invalidViews() {
+    private void invalidateViews() {
         task = taskDatabaseHelper.getTaskById(taskId);
         titleTextView.setText(task.getTitle());
         noteTextView.setText(task.getNote());
@@ -115,7 +117,7 @@ public class TaskDetailActivity extends AppCompatActivity {
             dueDateTextView.setText(dueDate);
             task.setDueDate(dueDate);
             taskDatabaseHelper.updateTask(task);
-            invalidViews();
+            invalidateViews();
         }
     };
 
@@ -125,7 +127,7 @@ public class TaskDetailActivity extends AppCompatActivity {
     private UpdateDialogFragment.TodoDialogFragmentCallback todoDialogFragmentCallback = new UpdateDialogFragment.TodoDialogFragmentCallback() {
         @Override
         public void onUpdateFinished() {
-            invalidViews();
+            invalidateViews();
         }
     };
 
@@ -161,11 +163,6 @@ public class TaskDetailActivity extends AppCompatActivity {
             taskDatabaseHelper.updateTask(task);
         }
     };
-
-    private void close() {
-        finish();
-        overridePendingTransition(R.anim.left_in, R.anim.right_out);
-    }
 
     @Override
     public void onBackPressed() {

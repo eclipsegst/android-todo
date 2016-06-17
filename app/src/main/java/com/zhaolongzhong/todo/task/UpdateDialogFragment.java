@@ -1,4 +1,4 @@
-package com.zhaolongzhong.todo;
+package com.zhaolongzhong.todo.task;
 
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -14,8 +14,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.zhaolongzhong.todo.R;
 import com.zhaolongzhong.todo.data.TaskDatabaseHelper;
-import com.zhaolongzhong.todo.model.Task;
+import com.zhaolongzhong.todo.service.model.Task;
 
 /**
  * Created by zz on 6/6/16.
@@ -29,13 +30,13 @@ public class UpdateDialogFragment extends DialogFragment {
 
     private static String TASK_ID = "taskId";
     private static String UPDATE_TAG = "updateTag";
-    private  String updateTag;
-
-    private EditText editText;
 
     private TodoDialogFragmentCallback todoDialogFragmentCallback;
     private TaskDatabaseHelper taskDatabaseHelper;
     private Task task;
+    private String updateTag;
+
+    private EditText editText;
 
     public static UpdateDialogFragment newInstance(long taskId, String updateTag) {
         UpdateDialogFragment updateDialogFragment = new UpdateDialogFragment();

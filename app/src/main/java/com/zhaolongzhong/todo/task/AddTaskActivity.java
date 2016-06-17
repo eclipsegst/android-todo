@@ -1,4 +1,4 @@
-package com.zhaolongzhong.todo;
+package com.zhaolongzhong.todo.task;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -22,8 +22,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.zhaolongzhong.todo.R;
 import com.zhaolongzhong.todo.data.TaskDatabaseHelper;
-import com.zhaolongzhong.todo.model.Task;
+import com.zhaolongzhong.todo.service.model.Task;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -33,19 +34,18 @@ import java.util.Locale;
 public class AddTaskActivity extends AppCompatActivity {
     private static final String TAG = AddTaskActivity.class.getSimpleName();
 
-    public static void newInstance(Context context) {
-        Intent intent = new Intent(context, AddTaskActivity.class);
-        context.startActivity(intent);
-    }
-
     private TaskDatabaseHelper taskDatabaseHelper;
+    private Task task;
 
     private EditText titleEditText;
     private EditText noteEditText;
     private TextView dueDateTextView;
     private Spinner prioritySpinner;
 
-    private Task task;
+    public static void newInstance(Context context) {
+        Intent intent = new Intent(context, AddTaskActivity.class);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -1,7 +1,8 @@
-package com.zhaolongzhong.todo;
+package com.zhaolongzhong.todo.service;
 
 import android.content.Context;
 
+import com.zhaolongzhong.todo.R;
 import com.zhaolongzhong.todo.main.TodoApplication;
 
 /**
