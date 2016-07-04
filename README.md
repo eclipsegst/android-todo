@@ -40,7 +40,7 @@ GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
 
-Describe any challenges encountered while building the app.
+Reloading data is a little bit challenging when database has been changed. The better way to handle this is to add data change listener, invalidate views once data have been changed.
 
 ## License
 
