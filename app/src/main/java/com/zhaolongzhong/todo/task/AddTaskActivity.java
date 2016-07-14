@@ -31,16 +31,19 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class AddTaskActivity extends AppCompatActivity {
     private static final String TAG = AddTaskActivity.class.getSimpleName();
 
     private TaskDatabaseHelper taskDatabaseHelper;
     private Task task;
 
-    private EditText titleEditText;
-    private EditText noteEditText;
-    private TextView dueDateTextView;
-    private Spinner prioritySpinner;
+    @BindView(R.id.add_task_activity_title_edit_text_id) EditText titleEditText;
+    @BindView(R.id.add_task_activity_note_edit_text_id) EditText noteEditText;
+    @BindView(R.id.add_task_activity_due_date_edit_text_id) TextView dueDateTextView;
+    @BindView(R.id.add_task_activity_priority_spinner_id) Spinner prioritySpinner;
 
     public static void newInstance(Context context) {
         Intent intent = new Intent(context, AddTaskActivity.class);
@@ -51,6 +54,7 @@ public class AddTaskActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_task_activity);
+        ButterKnife.bind(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(getString(R.string.create_task));
@@ -64,16 +68,12 @@ public class AddTaskActivity extends AppCompatActivity {
         taskDatabaseHelper = TaskDatabaseHelper.getInstance(this);
         task = new Task();
 
-        titleEditText = (EditText) findViewById(R.id.add_task_activity_title_edit_text_id);
         titleEditText.setImeOptions(EditorInfo.IME_ACTION_DONE);
         titleEditText.setSingleLine(true);
-        noteEditText = (EditText) findViewById(R.id.add_task_activity_note_edit_text_id);
         noteEditText.setImeOptions(EditorInfo.IME_ACTION_DONE);
         noteEditText.setSingleLine(true);
         noteEditText.setHorizontallyScrolling(false);
         noteEditText.setMaxLines(4);
-        dueDateTextView = (TextView) findViewById(R.id.add_task_activity_due_date_edit_text_id);
-        prioritySpinner = (Spinner) findViewById(R.id.add_task_activity_priority_spinner_id);
 
         titleEditText.requestFocus();
         dueDateTextView.setOnClickListener(dueDateOnClickListener);

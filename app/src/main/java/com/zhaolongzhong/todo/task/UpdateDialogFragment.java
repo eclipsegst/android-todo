@@ -18,6 +18,9 @@ import com.zhaolongzhong.todo.R;
 import com.zhaolongzhong.todo.data.TaskDatabaseHelper;
 import com.zhaolongzhong.todo.service.model.Task;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by zz on 6/6/16.
  */
@@ -36,7 +39,10 @@ public class UpdateDialogFragment extends DialogFragment {
     private Task task;
     private String updateTag;
 
-    private EditText editText;
+    @BindView(R.id.todo_dialog_title_text_view_id) TextView dialogTitleTextView;
+    @BindView(R.id.todo_dialog_title_edit_text_id) EditText editText;
+    @BindView(R.id.todo_dialog_cancel_button_id) Button cancelButton;
+    @BindView(R.id.todo_dialog_ok_button_id) Button okButton;
 
     public static UpdateDialogFragment newInstance(long taskId, String updateTag) {
         UpdateDialogFragment updateDialogFragment = new UpdateDialogFragment();
@@ -69,11 +75,9 @@ public class UpdateDialogFragment extends DialogFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
+
         taskDatabaseHelper = TaskDatabaseHelper.getInstance(getActivity());
-        TextView dialogTitleTextView = (TextView) view.findViewById(R.id.todo_dialog_title_text_view_id);
-        editText = (EditText) view.findViewById(R.id.todo_dialog_title_edit_text_id);
-        Button cancelButton = (Button) view.findViewById(R.id.todo_dialog_cancel_button_id);
-        Button okButton = (Button) view.findViewById(R.id.todo_dialog_ok_button_id);
 
         cancelButton.setOnClickListener(cancelOnClickListener);
         okButton.setOnClickListener(okOnClickListener);

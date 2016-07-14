@@ -25,6 +25,9 @@ import com.zhaolongzhong.todo.task.TaskAdapter;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -33,8 +36,11 @@ public class MainActivity extends AppCompatActivity {
     private List<Task> taskList;
     private TaskAdapter taskAdapter;
 
-    private Spinner spinner;
-    private TextView noTaskTextView;
+    @BindView(R.id.main_activity_toolbar_spinner_id) Spinner spinner;
+    @BindView(R.id.main_activity_no_task_text_view_id) TextView noTaskTextView;
+    @BindView(R.id.main_activity_toolbar_id) Toolbar toolbar;
+    @BindView(R.id.fab) FloatingActionButton fab;
+    @BindView(R.id.main_activity_task_list_view_id) ListView listView;
 
     public static void newInstance(Context context) {
         Intent intent = new Intent(context, MainActivity.class);
@@ -45,12 +51,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
+        ButterKnife.bind(this);
 
         taskDatabaseHelper = TaskDatabaseHelper.getInstance(this);
         taskList = taskDatabaseHelper.getAllTasks();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.main_activity_toolbar_id);
-        spinner = (Spinner) findViewById(R.id.main_activity_toolbar_spinner_id);
         toolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbar);
 
@@ -63,9 +68,6 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         spinner.setSelection(sharedPref.getInt(STATE_SPINNER, 0));
 
-        noTaskTextView = (TextView) findViewById(R.id.main_activity_no_task_text_view_id);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -74,9 +76,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         noTaskTextView.setVisibility(taskList.size() == 0 ? View.VISIBLE : View.GONE);
-        ListView listView = (ListView) findViewById(R.id.main_activity_task_list_view_id);
 
         taskAdapter = new TaskAdapter(this, taskList);
         listView.setAdapter(taskAdapter);

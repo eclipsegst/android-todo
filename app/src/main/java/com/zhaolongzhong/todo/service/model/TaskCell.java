@@ -15,6 +15,9 @@ import com.zhaolongzhong.todo.R;
 import com.zhaolongzhong.todo.task.TaskDetailActivity;
 import com.zhaolongzhong.todo.data.TaskDatabaseHelper;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by zz on 6/12/16.
  */
@@ -24,11 +27,11 @@ public class TaskCell extends RelativeLayout {
 
     private Task task;
 
-    private TextView titleTextView;
-    private TextView dueDateTextView;
-    private TextView priorityTextView;
-    private CheckBox statusCheckbox;
-    private ImageView navigationImage;
+    @BindView(R.id.task_cell_title_text_view_id) TextView titleTextView;
+    @BindView(R.id.task_cell_due_date_text_view_id) TextView dueDateTextView;
+    @BindView(R.id.task_cell_priority_text_view_id) TextView priorityTextView;
+    @BindView(R.id.task_cell_status_check_box_id) CheckBox statusCheckbox;
+    @BindView(R.id.task_cell_navigation_image_view_id) ImageView navigationImage;
 
     public TaskCell(Context context) {
         super(context);
@@ -47,12 +50,7 @@ public class TaskCell extends RelativeLayout {
 
     private void initialize() {
         LayoutInflater.from(getContext()).inflate(R.layout.task_cell, this);
-
-        titleTextView = (TextView) findViewById(R.id.task_cell_title_text_view_id);
-        dueDateTextView = (TextView) findViewById(R.id.task_cell_due_date_text_view_id);
-        priorityTextView = (TextView) findViewById(R.id.task_cell_priority_text_view_id);
-        statusCheckbox = (CheckBox) findViewById(R.id.task_cell_status_check_box_id);
-        navigationImage = (ImageView) findViewById(R.id.task_cell_navigation_image_view_id);
+        ButterKnife.bind(this);
 
         titleTextView.setOnClickListener(onClickListener);
         navigationImage.setOnClickListener(onClickListener);

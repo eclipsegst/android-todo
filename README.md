@@ -4,7 +4,7 @@
 
 Submitted by: **Zhaolong Zhong**
 
-Time spent: **15** hours spent in total
+Time spent: **15.5** hours spent in total
 
 ## User Stories
 
@@ -30,6 +30,7 @@ The following **additional** features are implemented:
 * [x] Add task status
 * [x] Add filter by status feature
 * [x] Add splash screen
+* [x] Use Butterknife annotation library to reduce view boilerplate
 
 ## Video Walkthrough 
 

@@ -17,13 +17,16 @@ import android.widget.TextView;
 
 import com.zhaolongzhong.todo.R;
 import com.zhaolongzhong.todo.data.TaskDatabaseHelper;
-import com.zhaolongzhong.todo.service.model.Task;
 import com.zhaolongzhong.todo.service.Priority;
+import com.zhaolongzhong.todo.service.model.Task;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class TaskDetailActivity extends AppCompatActivity {
     private static final String TAG = TaskDetailActivity.class.getSimpleName();
@@ -34,11 +37,11 @@ public class TaskDetailActivity extends AppCompatActivity {
     private Task task;
     private long taskId;
 
-    private TextView titleTextView;
-    private TextView noteTextView;
-    private TextView dueDateTextView;
-    private Spinner prioritySpinner;
-    private CheckBox statusCheckbox;
+    @BindView(R.id.task_detail_activity_title_text_view_id) TextView titleTextView;
+    @BindView(R.id.task_detail_activity_note_text_view_id) TextView noteTextView;
+    @BindView(R.id.task_detail_activity_due_date_text_view_id) TextView dueDateTextView;
+    @BindView(R.id.task_detail_activity_priority_spinner_id) Spinner prioritySpinner;
+    @BindView(R.id.task_detail_activity_status_check_box_id) CheckBox statusCheckbox;
 
     public static void newInstance(Context context, long taskId) {
         Intent intent = new Intent(context, TaskDetailActivity.class);
@@ -50,17 +53,12 @@ public class TaskDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.task_detail_activity);
+        ButterKnife.bind(this);
 
         setTitle(getString(R.string.task_detail_activity));
 
         taskDatabaseHelper = TaskDatabaseHelper.getInstance(this);
         taskId = getIntent().getLongExtra(TASK_ID, -1);
-
-        titleTextView = (TextView) findViewById(R.id.task_detail_activity_title_text_view_id);
-        noteTextView = (TextView) findViewById(R.id.task_detail_activity_note_text_view_id);
-        dueDateTextView = (TextView) findViewById(R.id.task_detail_activity_due_date_text_view_id);
-        statusCheckbox = (CheckBox) findViewById(R.id.task_detail_activity_status_check_box_id);
-        prioritySpinner = (Spinner) findViewById(R.id.task_detail_activity_priority_spinner_id);
 
         titleTextView.setOnClickListener(textViewOnClickListener);
         noteTextView.setOnClickListener(textViewOnClickListener);
