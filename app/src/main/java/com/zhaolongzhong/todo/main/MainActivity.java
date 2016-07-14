@@ -18,22 +18,20 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.zhaolongzhong.todo.R;
-import com.zhaolongzhong.todo.data.TaskDatabaseHelper;
 import com.zhaolongzhong.todo.service.model.Task;
 import com.zhaolongzhong.todo.task.AddTaskActivity;
 import com.zhaolongzhong.todo.task.TaskAdapter;
 
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
+import io.realm.RealmList;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final String STATE_SPINNER = "spinnerState";
-    private TaskDatabaseHelper taskDatabaseHelper;
-    private List<Task> taskList;
+    private RealmList<Task> taskList;
     private TaskAdapter taskAdapter;
 
     @BindView(R.id.main_activity_toolbar_spinner_id) Spinner spinner;
@@ -52,9 +50,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
         ButterKnife.bind(this);
-
-        taskDatabaseHelper = TaskDatabaseHelper.getInstance(this);
-        taskList = taskDatabaseHelper.getAllTasks();
+        taskList = new RealmList<>();
 
         toolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbar);
@@ -81,31 +77,37 @@ public class MainActivity extends AppCompatActivity {
         taskAdapter = new TaskAdapter(this, taskList);
         listView.setAdapter(taskAdapter);
         listView.setOnItemLongClickListener(onItemLongClickListener);
+
+        invalidateViews();
     }
 
     private void invalidateViews() {
-        //TODO: Is this the most efficient way?
+        taskList.clear();
         switch (spinner.getSelectedItemPosition()) {
             case 0:
-                taskList = taskDatabaseHelper.getAllTasks();
+                taskList.addAll(Task.getAllTasks());
                 break;
             case 1:
-                taskList = taskDatabaseHelper.getAllTasksByStatus(false);
+                taskList.addAll(Task.getAllTasks(false));
                 break;
             case 2:
-                taskList = taskDatabaseHelper.getAllTasksByStatus(true);
+                taskList.addAll(Task.getAllTasks(true));
                 break;
         }
-
-        taskAdapter.clear();
-        taskAdapter.addAll(taskList);
+        taskAdapter.notifyDataSetChanged();
         noTaskTextView.setVisibility(taskList.size() == 0 ? View.VISIBLE : View.GONE);
     }
+
+    //todo: add TaskCell callback to reload data when an item is checked
 
     private ListView.OnItemLongClickListener onItemLongClickListener = new AdapterView.OnItemLongClickListener() {
         @Override
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-            taskDatabaseHelper.deleteTaskById(taskList.get(position).getId());
+            Realm realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
+            taskList.deleteFromRealm(position);
+            realm.commitTransaction();
+            realm.close();
             invalidateViews();
 
             return true;

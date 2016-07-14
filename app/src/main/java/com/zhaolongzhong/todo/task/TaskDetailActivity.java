@@ -16,7 +16,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.zhaolongzhong.todo.R;
-import com.zhaolongzhong.todo.data.TaskDatabaseHelper;
 import com.zhaolongzhong.todo.service.Priority;
 import com.zhaolongzhong.todo.service.model.Task;
 
@@ -27,15 +26,15 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
 
 public class TaskDetailActivity extends AppCompatActivity {
     private static final String TAG = TaskDetailActivity.class.getSimpleName();
 
     private static final String TASK_ID = "taskId";
 
-    private TaskDatabaseHelper taskDatabaseHelper;
     private Task task;
-    private long taskId;
+    private String taskId;
 
     @BindView(R.id.task_detail_activity_title_text_view_id) TextView titleTextView;
     @BindView(R.id.task_detail_activity_note_text_view_id) TextView noteTextView;
@@ -43,7 +42,7 @@ public class TaskDetailActivity extends AppCompatActivity {
     @BindView(R.id.task_detail_activity_priority_spinner_id) Spinner prioritySpinner;
     @BindView(R.id.task_detail_activity_status_check_box_id) CheckBox statusCheckbox;
 
-    public static void newInstance(Context context, long taskId) {
+    public static void newInstance(Context context, String taskId) {
         Intent intent = new Intent(context, TaskDetailActivity.class);
         intent.putExtra(TASK_ID, taskId);
         context.startActivity(intent);
@@ -57,8 +56,8 @@ public class TaskDetailActivity extends AppCompatActivity {
 
         setTitle(getString(R.string.task_detail_activity));
 
-        taskDatabaseHelper = TaskDatabaseHelper.getInstance(this);
-        taskId = getIntent().getLongExtra(TASK_ID, -1);
+        taskId = getIntent().getStringExtra(TASK_ID);
+        task = Task.getTaskById(taskId);
 
         titleTextView.setOnClickListener(textViewOnClickListener);
         noteTextView.setOnClickListener(textViewOnClickListener);
@@ -73,14 +72,13 @@ public class TaskDetailActivity extends AppCompatActivity {
         invalidateViews();
     }
 
-    private void invalidateViews() {
-        task = taskDatabaseHelper.getTaskById(taskId);
+    private void invalidateViews() {;
         titleTextView.setText(task.getTitle());
         noteTextView.setText(task.getNote());
         dueDateTextView.setText(task.getDueDate());
         Priority priority = Priority.instanceFromName(task.getPriority());
         prioritySpinner.setSelection(priority.getId());
-        statusCheckbox.setChecked(task.isStatus());
+        statusCheckbox.setChecked(task.isComplete());
         statusCheckbox.setOnCheckedChangeListener(onCheckedChangeListener);
     }
 
@@ -113,8 +111,13 @@ public class TaskDetailActivity extends AppCompatActivity {
             DateFormat format = new SimpleDateFormat(getString(R.string.due_date_format), Locale.ENGLISH);
             String dueDate = format.format(calendar.getTime());
             dueDateTextView.setText(dueDate);
-            task.setDueDate(dueDate);
-            taskDatabaseHelper.updateTask(task);
+
+            Realm realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
+            task.setDueDate(dueDate);;
+            realm.copyToRealmOrUpdate(task);
+            realm.commitTransaction();
+            realm.close();
             invalidateViews();
         }
     };
@@ -125,7 +128,7 @@ public class TaskDetailActivity extends AppCompatActivity {
     private UpdateDialogFragment.TodoDialogFragmentCallback todoDialogFragmentCallback = new UpdateDialogFragment.TodoDialogFragmentCallback() {
         @Override
         public void onUpdateFinished() {
-            invalidateViews();
+            updateTask();
         }
     };
 
@@ -133,8 +136,14 @@ public class TaskDetailActivity extends AppCompatActivity {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             Priority priority = Priority.instanceFromId(position);
+
+            Realm realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
             task.setPriority(priority.getName());
-            taskDatabaseHelper.updateTask(task);
+            realm.copyToRealmOrUpdate(task);
+            realm.commitTransaction();
+            realm.close();
+            invalidateViews();
         }
 
         @Override
@@ -157,8 +166,13 @@ public class TaskDetailActivity extends AppCompatActivity {
     private CompoundButton.OnCheckedChangeListener onCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            task.setStatus(isChecked);
-            taskDatabaseHelper.updateTask(task);
+            Realm realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
+            task.setComplete(isChecked);
+            realm.copyToRealmOrUpdate(task);
+            realm.commitTransaction();
+            realm.close();
+            invalidateViews();
         }
     };
 
@@ -166,5 +180,14 @@ public class TaskDetailActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.left_in, R.anim.right_out);
+    }
+
+    private void updateTask() {
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        realm.copyToRealmOrUpdate(task);
+        realm.commitTransaction();
+        realm.close();
+        invalidateViews();
     }
 }

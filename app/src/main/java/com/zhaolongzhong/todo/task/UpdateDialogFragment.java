@@ -15,11 +15,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.zhaolongzhong.todo.R;
-import com.zhaolongzhong.todo.data.TaskDatabaseHelper;
 import com.zhaolongzhong.todo.service.model.Task;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
 
 /**
  * Created by zz on 6/6/16.
@@ -35,7 +35,6 @@ public class UpdateDialogFragment extends DialogFragment {
     private static String UPDATE_TAG = "updateTag";
 
     private TodoDialogFragmentCallback todoDialogFragmentCallback;
-    private TaskDatabaseHelper taskDatabaseHelper;
     private Task task;
     private String updateTag;
 
@@ -44,11 +43,11 @@ public class UpdateDialogFragment extends DialogFragment {
     @BindView(R.id.todo_dialog_cancel_button_id) Button cancelButton;
     @BindView(R.id.todo_dialog_ok_button_id) Button okButton;
 
-    public static UpdateDialogFragment newInstance(long taskId, String updateTag) {
+    public static UpdateDialogFragment newInstance(String taskId, String updateTag) {
         UpdateDialogFragment updateDialogFragment = new UpdateDialogFragment();
 
         Bundle bundle = new Bundle();
-        bundle.putLong(TASK_ID, taskId);
+        bundle.putString(TASK_ID, taskId);
         bundle.putString(UPDATE_TAG, updateTag);
         updateDialogFragment.setArguments(bundle);
 
@@ -77,13 +76,11 @@ public class UpdateDialogFragment extends DialogFragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        taskDatabaseHelper = TaskDatabaseHelper.getInstance(getActivity());
-
         cancelButton.setOnClickListener(cancelOnClickListener);
         okButton.setOnClickListener(okOnClickListener);
 
-        long taskId = getArguments().getLong(TASK_ID);
-        task = taskDatabaseHelper.getTaskById(taskId);
+        String taskId = getArguments().getString(TASK_ID);
+        task = Task.getTaskById(taskId);
         updateTag = getArguments().getString(UPDATE_TAG);
 
         if (updateTag.equals(UPDATE_TITLE)) {
@@ -113,13 +110,18 @@ public class UpdateDialogFragment extends DialogFragment {
         public void onClick(View v) {
             getDialog().dismiss();
 
+            Realm realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
+
             if (updateTag.equals(UPDATE_TITLE)) {
                 task.setTitle(editText.getText().toString());
             } else {
                 task.setNote(editText.getText().toString());
             }
+            realm.copyToRealmOrUpdate(task);
+            realm.commitTransaction();
+            realm.close();
 
-            taskDatabaseHelper.updateTask(task);
             todoDialogFragmentCallback.onUpdateFinished();
         }
     };

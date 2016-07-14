@@ -13,10 +13,10 @@ import android.widget.TextView;
 import com.zhaolongzhong.todo.main.MainActivity;
 import com.zhaolongzhong.todo.R;
 import com.zhaolongzhong.todo.task.TaskDetailActivity;
-import com.zhaolongzhong.todo.data.TaskDatabaseHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
 
 /**
  * Created by zz on 6/12/16.
@@ -63,15 +63,18 @@ public class TaskCell extends RelativeLayout {
         titleTextView.setText(task.getTitle());
         dueDateTextView.setText(task.getDueDate());
         priorityTextView.setText(task.getPriority());
-        statusCheckbox.setChecked(task.isStatus());
+        statusCheckbox.setChecked(task.isComplete());
     }
 
     private CompoundButton.OnCheckedChangeListener onCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            task.setStatus(isChecked);
-            TaskDatabaseHelper taskDatabaseHelper = TaskDatabaseHelper.getInstance(getContext());
-            taskDatabaseHelper.updateTask(task);
+            Realm realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
+            task.setComplete(isChecked);
+            realm.copyToRealmOrUpdate(task);
+            realm.commitTransaction();
+            realm.close();
         }
     };
 

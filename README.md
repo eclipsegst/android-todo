@@ -4,7 +4,7 @@
 
 Submitted by: **Zhaolong Zhong**
 
-Time spent: **15.5** hours spent in total
+Time spent: **16.5** hours spent in total
 
 ## User Stories
 
@@ -27,10 +27,11 @@ The following **additional** features are implemented:
 
 * [x] Add test for using SQLite
 * [x] Add actvity transition animation
-* [x] Add task status
-* [x] Add filter by status feature
+* [x] Add task complete
+* [x] Add filter by complete feature
 * [x] Add splash screen
 * [x] Use Butterknife annotation library to reduce view boilerplate
+* [x] Use Realm to persist data
 
 ## Video Walkthrough 
 

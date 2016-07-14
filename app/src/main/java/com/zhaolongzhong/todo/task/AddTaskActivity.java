@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,21 +22,21 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.zhaolongzhong.todo.R;
-import com.zhaolongzhong.todo.data.TaskDatabaseHelper;
 import com.zhaolongzhong.todo.service.model.Task;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
 
 public class AddTaskActivity extends AppCompatActivity {
     private static final String TAG = AddTaskActivity.class.getSimpleName();
 
-    private TaskDatabaseHelper taskDatabaseHelper;
     private Task task;
 
     @BindView(R.id.add_task_activity_title_edit_text_id) EditText titleEditText;
@@ -65,7 +64,6 @@ public class AddTaskActivity extends AppCompatActivity {
         // Place this line after setSupportActionBar, order matters
         toolbar.setNavigationOnClickListener(navigationOnClickListener);
 
-        taskDatabaseHelper = TaskDatabaseHelper.getInstance(this);
         task = new Task();
 
         titleEditText.setImeOptions(EditorInfo.IME_ACTION_DONE);
@@ -172,12 +170,18 @@ public class AddTaskActivity extends AppCompatActivity {
     }
 
     private void saveTask() {
+        String uuid = UUID.randomUUID().toString();
+        task.setId(uuid);
         task.setTitle(titleEditText.getText().toString());
         task.setNote(noteEditText.getText().toString());
         task.setPriority(prioritySpinner.getSelectedItem().toString());
-        task.setStatus(false);
-        taskDatabaseHelper.addTask(task);
-        Log.d(TAG, "saveTask: " + task.getPriority());
+        task.setComplete(false);
+
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        realm.copyToRealmOrUpdate(task);
+        realm.commitTransaction();
+        realm.close();
         close();
     }
 
